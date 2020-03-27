@@ -15,34 +15,17 @@
 
 Route::get('/', function () {
     
-    $post = \App\Post::first();
+   // $post = \App\Post::first();
 
-    $categories = \App\Category::all();
+    //$categories = \App\Category::all();
 
-    $post->categories()->sync($categories);
+    //$post->categories()->sync($categories);
 
-    dd($categories);
-    
-    
+    //dd($categories);
+
     
     return view('welcome');
 });
-
-
-//Resource routes 
-
-Route::resource('categories', 'CategoriesController');
-
-Route::resource('posts', 'PostsController');
-
-
-
-
-//Get routes
-
-Route::get('trashed-posts', 'PostsController@trashed')->name('trashed-posts.index');
-
-
 
 
 
@@ -52,6 +35,42 @@ Route::get('trashed-posts', 'PostsController@trashed')->name('trashed-posts.inde
 
 Auth::routes();
 
+Auth::routes();
+
+//Route group
+Route::middleware(['auth'])->group(function () {
+
+    Route::resource('posts', 'PostsController');
+    Route::resource('categories', 'CategoriesController');
+    Route::resource('tags', 'TagsController');
+
+    Route::get('/home', 'HomeController@index')->name('home');
+
+
+    Route::get('trashed-posts', 'PostsController@trashed')->name('trashed-posts.index');
+    Route::put('restore-post/{post}', 'PostsController@restore')->name('restore-posts');
+
+   
+
+});
+
+/*
+//Resource routes 
+
+Route::resource('categories', 'CategoriesController');
+
+//Resource Routes are automatically protected with middleware
+Route::resource('posts', 'PostsController')->middleware('auth');
+
+//Get routes
+
+Route::get('trashed-posts', 'PostsController@trashed')->name('trashed-posts.index');
+
+//put routes
+Route::put('restore-post/{post}', 'PostsController@restore')->name('restore-posts');
+
 Route::get('/home', 'HomeController@index')->name('home');
 
 Route::post('add-category', 'CategoriesController@add');
+    //Route::post('add-category', 'CategoriesController@add');
+*/

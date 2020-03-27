@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Posts;
+namespace App\Http\Requests\Tags;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-
-class createPostsRequest extends FormRequest
+class CreateTagRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,12 +25,7 @@ class createPostsRequest extends FormRequest
     {
         return [
             
-            'published_at' => 'required', 
-            'title' => 'required',
-            'description' => 'required',
-            'image' => 'required|image',
-            'content' => 'required',
-            'user_id' => 'required'
+            'name' => 'required|unique:tags',
 
         ];
     }

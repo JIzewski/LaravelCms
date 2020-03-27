@@ -4,13 +4,22 @@ namespace App\Http\Controllers;
 use App\Post;
 use App\User;
 use App\Category;
+use App\Tag;
 use App\http\Requests\Posts\CreatePostsRequest;
+use App\http\Requests\Posts\UpdatePostRequest;
 
 
 use Illuminate\Http\Request;
 
 class PostsController extends Controller
 {
+
+    //Constructor
+    public function __construct()
+    {
+        $this->middleware('verifyCategoriesCount')->only(['create', 'store']);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -19,7 +28,12 @@ class PostsController extends Controller
     public function index()
     {
 
-        return view('posts.index')->with('posts', Post::with('user')->get());
+        $posts = Post::with('user')->get();
+        $categories = Post::with('categories')->get();
+
+        return view('posts.index', compact('posts', 'categories'));
+ 
+     
     }
 
     /**
@@ -29,9 +43,12 @@ class PostsController extends Controller
      */
     public function create()
     {
+        
         $users = User::all();
         $categories = Category::all();
-        return view('posts.create', compact('users', 'categories'));
+        $tags = Tag::all();
+
+        return view('posts.create', compact('users', 'categories', 'tags'));
       
     }
 
@@ -48,45 +65,31 @@ class PostsController extends Controller
         //upload image to storage.
         $image = $request->image->store('posts');
 
-        if(isset($request->post_id))
-        {
-            Post::find($request->post_id)->update([
+            $post = Post::create([
 
+                'published_at' => $request->published_at, 
                 'title' => $request->title,
                 'description' => $request->description,
                 'content' => $request->content, 
                 'image'=> $image,
-                'user_id' => $request->user_id
-            ]);
-
-
-            return redirect(route('posts.index'));
-        }
-      
-        else
-        {
-            Post::create([
-
-                'title' => $request->title,
-                'description' => $request->description,
-                'content' => $request->content, 
-                'image'=> $image,
-                'user_id' => $request->user_id
+                'user_id' => $request->user_id,
     
             ])
                 ->categories()
                 ->attach($request->category_id);
 
+                if($request->tags)
+                {
+                    $post->tags()->attach($request->tags);
+                }
+
+
+
         
             session()->flash('success', 'Post created successfully');
 
-            return redirect(route('posts.index'));
-
-        }
-
-    
-
-        
+            //return view('posts.index')->with('posts', Post::with('user')->get());
+            return view('posts.index');
         
     }
 
@@ -98,7 +101,7 @@ class PostsController extends Controller
      */
     public function show($id)
     {
-        //
+        return view('posts.show')->with('post', Post::find($id));
     }
 
     /**
@@ -111,8 +114,9 @@ class PostsController extends Controller
     {
         $users = User::all();
         $categories = Category::all();
-        
-        return view('posts.create', compact('post', 'users', 'categories'));
+        $tags = Tag::all();
+
+        return view('posts.create', compact('post', 'users', 'categories', 'tags'));
     
     }
 
@@ -124,14 +128,32 @@ class PostsController extends Controller
      * @return \Illuminate\Http\Response
      */
     
-    public function update(Post $post)
+    public function update(UpdatePostRequest $request, Post $post)
     {
         $users = User::all();
         $categories = Category::all();
-        
-       // return view('posts.create', compact('post', 'users', 'categories'));
 
-       //return view('posts.create')->with('post', $post);
+        //For security
+        //$requst->validated(); 
+        $data = $request->only(['title', 'description', 'published_at', 'content', 'category']);
+
+        if ($request->hasFile('image')) {
+
+
+             //delte image via post method. 
+             $post->deleteImage();
+
+            //assign new image
+            $image = $request->image->store('posts');
+            $data['image'] = $image;
+
+        }
+
+        //Update post record with new data. 
+        $post->update($data);
+        session()->flash('success', 'Post updated successfully');        
+
+        return view('posts.index')->with('posts', Post::with('user')->get());
         
     }
 
@@ -152,6 +174,8 @@ class PostsController extends Controller
         if($post->trashed())
         {
             $post->forceDelete();
+            $post->deleteImage();
+            $post->forceDelete();
         }
         else
         {
@@ -168,12 +192,24 @@ class PostsController extends Controller
      */
 
     public function trashed()
-{ 
-    //$trash = Post::withTrashed()->get(); 
+{
 
-    return view('posts.index')->with('posts', Post::withTrashed()->get());
+    return view('posts.index')->with('posts', Post::onlyTrashed()->get());
 
 }
+
+public function restore($id)
+{
+
+    $post = Post::withTrashed()->where('id', $id)->firstOrFail();
+
+    //Simply restore post 
+    $post->restore();
+    session()->flash('success', 'Post restored successfully');
+    return redirect()->back();
+}
+
+
 }
 
 

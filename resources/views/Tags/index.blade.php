@@ -11,19 +11,20 @@
 
                                         <div class="card-header">
                                             <div class="title m-b-md">
-                                                <h1 class="text-center my-5">Categories</h2>
+                                                <h1 class="text-center my-5">Tags</h2>
                                             </div>
                                         </div>
                                         <div class="card-body">
 
                                             <div class="d-flex justify-content-end mb-2">
-                                                <a href="{{ route('categories.create') }}" class="btn btn-primary" style="float: right; color: white;">Create Category<a>
+                                                <a href="{{ route('tags.create') }}" class="btn btn-primary" style="float: right; color: white;">Create Tag<a>
                                              </div>
 
-                                            @if($categories->count() <= 0)
-                                                <p>No categories in library</p>
+                                            @if($tags->count() <= 0)
+                                                <p>No tags in library</p>
                                             @else
-                                            <!--Table for displaying categories-->
+                    
+                                        
                                             <table class="table">
 
                                                 <thead>
@@ -32,20 +33,17 @@
 
                                                 <tbody>
 
-                                                @foreach($categories as $category)
+                                                @foreach($tags as $tag)
                                                                 <tr>
                                                                 
                                                                     
                                                                     <td>
-                                                                        {{ $category->name }}
+                                                                        {{ $tag->name }}
                                                                     </td>
 
                                                                     <td>
-
-                                                                        <div class="btn-group">
-                                                                            <a href="{{ route('categories.edit' , $category->id) }}" class="=" style="color: white;">Edit<a>
-                                                                            <button class="btn btn-danger btn-sm" style="color: white;" onclick="handleDelete({{ $category->id }})">Delete</button>
-                                                                        </div>
+                                                                        <a href="{{ route('tags.edit' , $tag->id) }}" class="btn btn-info btn-sm" style="color: white;">Edit<a>
+                                                                        <button class="btn btn-danger btn-sm" style="color: white;" onclick="handleDelete({{ $tag->id }})">Delete</button>
 
                                                                    </td>
                                                              
@@ -59,7 +57,7 @@
 
                                             
 
-                                                <form action="" method="POST" id="deleteCategoryForm">
+                                                <form action="{{ route('tags.destroy', $tag->id) }}" method="POST" id="deleteTagForm">
 
                                                 @csrf
                                                     @method('DELETE')
@@ -75,7 +73,7 @@
                                                                         </button>
                                                                     </div>
                                                                     <div class="modal-body">
-                                                                        <p>Are you sure you want to delete this category? This action cannot be undone.<p> 
+                                                                        <p>Are you sure you want to delete this tag? This action cannot be undone.<p> 
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -93,8 +91,6 @@
                                 
                                     </div>
                                         
-                         
-                           
                            
                     </div>
             </div>
@@ -109,9 +105,9 @@
             function handleDelete(id)
             {
 
-                var form = document.getElementById('deleteCategoryForm')
+                var form = document.getElementById('deleteTagForm')
 
-                form.action = 'categories/' + id
+                form.action = 'tags/' + id
 
                 //console.log('deleting ', form)
 

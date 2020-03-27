@@ -3,6 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--<link href="{{ asset('css/page.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
     <!-- CSRF Token -->
@@ -138,10 +141,21 @@
                 <div class="container">
 
                             @if(session()->has('success'))
-                                    <div class="aler alert-success">
+                                    <div class="alert alert-success">
                                         {{ session()->get('success')}}
                                     </div>
                             @endif
+                </div>
+
+                <div class="container">
+
+                    @if(session()->has('error'))
+                            <div class="alert alert-danger"">
+                                {{ session()->get('error')}}
+                            </div>
+                    @endif
+
+                </div>
                             
                     <div class="row">
                         <div class="col-md-4">
@@ -149,7 +163,9 @@
                             <ul class="list-group">
 
                                 <li class="list-group-item"><a href="{{ route('posts.index') }}">Posts</a></li>
+                                <li class="list-group-item"><a href="{{ route('tags.index') }}">Tags</a></li>
                                 <li class="list-group-item"><a href="{{ route('categories.index') }}">Categories</a></li>
+                           
                          
                                 
 
@@ -191,6 +207,8 @@
 
      <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
+   <!-- <script src="{{ asset('js/page.min.js') }}"></script>
+    <script src="{{ asset('js/script.js') }}"></script>-->
     @yield('scripts')
 
     

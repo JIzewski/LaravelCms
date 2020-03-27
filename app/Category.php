@@ -10,6 +10,8 @@ class Category extends Model
         'name'
     ];
 
+  
+
     public function posts()
     {
         return $this->belongsToMany(Post::class)->withTimestampe();

@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Post extends Model
 {
@@ -32,11 +33,43 @@ class Post extends Model
     }
 
 
+    //One to One
+    /*
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }*/
+
+
+    // //Many to Many
     public function categories()
     {
 
         return $this->belongsToMany(Category::class);
 
     }
+
+    // //Many to Many
+    public function tags()
+    {
+
+        return $this->belongsToMany(Tag::class);
+
+    }
+
+    /*
+    *Delete post image from storage.
+    * @return void
+
+    */
+
+
+    public function deleteImage()
+    {
+        //delete image file
+        Storage::delete($this->image);
+    }
+
+ 
 
 }
