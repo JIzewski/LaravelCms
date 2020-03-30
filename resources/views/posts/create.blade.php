@@ -83,6 +83,7 @@
                             <option value="{{ $category->id }}">
                                 {{ $category->name }}
                             </option>
+                            <!--I am a change -->
                         @endforeach
                     </select>
             </div>

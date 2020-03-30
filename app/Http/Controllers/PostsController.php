@@ -83,7 +83,12 @@ class PostsController extends Controller
                     $post->tags()->attach($request->tags);
                 }
 
+<<<<<<< HEAD
                 //Git commit First
+=======
+                //Git change in testing branch
+                
+>>>>>>> testing
 
 
 
