@@ -108,10 +108,11 @@ class TagsController extends Controller
     {
               //delete record
               $tag->delete();
-
               session()->flash('success', 'tag deleted successfully.' );
 
               return redirect(route('tags.index'));
+
+              //comment in testing branch in TagsController
 
     }
 }
